@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Template</title>
+
+    <style>
+      .todo{
+        margin: 10px;
+      }
+      button{
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    // Your  code will go here
+
+    function ShowTodoList(props){
+      return (<div className="todoList">
+        <h2>All Todo</h2>
+        <ol  >
+        {props.todoList.map((itm, indx)=>{
+          return (
+          
+            <li className="todo" key={indx}>{itm.todo} {itm.isComplete?<button onClick={props.markComplete} data-iscompleteid={itm.id} style={{color:"green", border:"1px solid green"}}>Complete</button>:<button onClick={props.markComplete} data-iscompleteid={itm.id} style={{color:"red", border:"1px solid red"}}>Panding</button>} {<button onClick={props.deletTodo} data-removeid={itm.id}>Remove</button>}</li>
+            
+          )
+        })}
+        </ol>
+      </div>);
+    }
+
+    function App(){
+      const [todoList, settodoList] = React.useState([]);
+
+      function addTodo(e){
+        settodoList([...todoList, {id:Date.now(), todo:document.getElementById("todoInput").value, isComplete:false}])
+        document.getElementById("todoInput").value = "";
+      }
+
+      function deletTodo(e){
+        console.log("This is remove id"+e.target.getAttribute("data-removeid"))
+        let newList = todoList.filter((indx)=>{
+          if(indx.id==Number(e.target.getAttribute("data-removeid"))){
+            console.log(indx.id)
+            return false;
+          }else{
+            return true;
+          }
+        })
+        settodoList(newList);
+      }
+
+      function markComplete(e){
+        console.log(e.target.getAttribute("data-iscompleteid"))
+
+        let newList = todoList.map((itm)=>{
+          if(itm.id==Number(e.target.getAttribute("data-iscompleteid"))){
+            return {...itm, isComplete:!itm.isComplete}
+          }else{
+          return itm;
+          }
+        })
+        settodoList(newList);
+      }
+
+
+
+
+      return (<>
+      <input type="text" placeholder="Enter your todo" id="todoInput"/><button onClick={addTodo}>Add Todo</button>
+      <ShowTodoList todoList={todoList} deletTodo={deletTodo} markComplete={markComplete} />
+      </>)
+    }
+    
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App/>)
+    
+
+  </script>
+</html>
